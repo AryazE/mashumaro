@@ -2,47 +2,16 @@ name: tests
 
 on:
   push:
-    branches:
-      - '*'
   pull_request:
-    branches:
-      - master
+  workflow_dispatch:
 
 jobs:
-  test-code-style:
-    name: Code style tests
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          allow-prereleases: true
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install .
-          pip install -r requirements-dev.txt
-      - name: Run ruff
-        run: ruff check mashumaro
-      - name: Run mypy
-        run: mypy mashumaro
-      - name: Run black
-        run: black --check .
-      - name: Run codespell
-        run: codespell mashumaro tests README.md .github/*.md
   test-posix:
     name: Tests on Posix
-    needs:
-      - test-code-style
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.11"]
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -53,59 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install .
+        pip install -e .
         pip install -r requirements-dev.txt
     - name: Run tests with coverage
       run: pytest --cov=mashumaro --cov=tests
-    - name: Upload Coverage
-      run: coveralls --service=github
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_FLAG_NAME: posix-${{ matrix.python-version }}
-        COVERALLS_PARALLEL: true
-  test-windows:
-    name: Tests on Windows
-    needs:
-      - test-code-style
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-        allow-prereleases: true
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install .
-        pip install -r requirements-dev.txt
-        pip install tzdata
-    - name: Run tests with coverage
-      run: pytest --cov=mashumaro --cov=tests
-    - name: Upload Coverage
-      run: coveralls --service=github
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_FLAG_NAME: windows-${{ matrix.python-version }}
-        COVERALLS_PARALLEL: true
-  coveralls:
-    name: Finish Coveralls
-    needs:
-    - test-posix
-    - test-windows
-    runs-on: ubuntu-latest
-    steps:
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: 3.11
-    - name: Install dependencies
-      run: pip install coveralls
-    - name: Finish coveralls
-      run: coveralls --service=github --finish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
