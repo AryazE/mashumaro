@@ -24,5 +24,12 @@ jobs:
         pip install --upgrade pip
         pip install -e .
         pip install -r requirements-dev.txt
+    - name: Instrument code
+      uses: AryazE/auto-dylin/instrument@main
+      with:
+        analysis-coverage: false
     - name: Run tests with coverage
       run: pytest --cov=mashumaro --cov=tests
+    - name: Report results
+      if: always()
+      uses: AryazE/auto-dylin/report@main
