@@ -29,7 +29,7 @@ jobs:
       with:
         analysis-coverage: false
     - name: Run tests with coverage
-      run: pytest --cov=mashumaro --cov=tests
+      run: pytest
     - name: Report results
       if: always()
       uses: AryazE/auto-dylin/report@main
