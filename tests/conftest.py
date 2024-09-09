@@ -1,3 +1,6 @@
+# DYNAPYT: DO NOT INSTRUMENT
+
+
 from unittest.mock import patch
 
 from mashumaro.core.const import PY_312_MIN, PY_313_MIN
