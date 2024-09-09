@@ -28,7 +28,7 @@ jobs:
       with:
         analysis-coverage: false
     - name: Run tests with coverage
-      run: python -m pytest --collect-only -q tests
+      run: python -m pytest --collect-only -vv tests
     - name: Report results
       if: always()
       uses: AryazE/auto-dylin/report@main
