@@ -29,7 +29,7 @@ jobs:
       with:
         analysis-coverage: false
     - name: Run tests with coverage
-      run: pytest -n 4 --timeout 60
+      run: pytest -n 4 --timeout 60 tests
     - name: Report results
       if: always()
       uses: AryazE/auto-dylin/report@main
